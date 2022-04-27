@@ -22,6 +22,12 @@ export const Todo = () => {
     setTodos(newTodos);
   };
 
+  const deleteTodo = (index: number) => {
+    const newTodos = [...todos];
+    newTodos.splice(index, 1);
+    setTodos(newTodos);
+  };
+
   return (
     <div css={wrapper}>
       <h1 css={title}>todos</h1>
@@ -29,7 +35,7 @@ export const Todo = () => {
         <div>
           <TodoAdd addTodo={addTodo} />
           <div css={todoListWrapper}>
-            <TodoList todos={todos} />
+            <TodoList todos={todos} deleteTodo={deleteTodo} />
           </div>
         </div>
       </div>

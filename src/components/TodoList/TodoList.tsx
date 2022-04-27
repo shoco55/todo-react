@@ -1,7 +1,7 @@
 import { VFC, useRef, useState, useEffect } from 'react';
 import { css } from '@emotion/react';
 
-import deleteImage from 'assets/images/cross.svg';
+import { TodoDelete } from 'components/TodoDelete/TodoDelete';
 
 import { usePrevious } from 'hooks/usePrevious';
 
@@ -11,10 +11,11 @@ import { palette, color, size } from 'assets/css/foundation/variables';
 
 type Props = {
   todos: TodoType[];
+  deleteTodo: (index: number) => void;
 };
 
 export const TodoList: VFC<Props> = (props) => {
-  const { todos } = props;
+  const { todos, deleteTodo } = props;
 
   const listRef = useRef(null);
   const [listHeight, setListHeight] = useState(0);
@@ -47,7 +48,7 @@ export const TodoList: VFC<Props> = (props) => {
 
   return (
     <ul css={list} ref={listRef}>
-      {todos.map((todo) => {
+      {todos.map((todo, index) => {
         const { id, content, isCompleted } = todo;
         return (
           <li key={id} css={listItem}>
@@ -63,9 +64,7 @@ export const TodoList: VFC<Props> = (props) => {
               </label>
               <p css={checkboxText}>{content}</p>
 
-              <button type="button" css={deleteButton}>
-                <img src={deleteImage} alt="削除アイコン" css={deleteIcon} />
-              </button>
+              <TodoDelete itemIndex={index} deleteTodo={deleteTodo} />
             </div>
           </li>
         );
@@ -166,24 +165,4 @@ const checkboxText = css`
     text-decoration: line-through;
     opacity: 0.6;
   }
-`;
-
-const deleteButton = css`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-shrink: 0;
-  margin-left: auto;
-  width: 30px;
-  height: 30px;
-
-  &:hover {
-    background-color: ${color.iconHover};
-    border-radius: 4px;
-  }
-`;
-
-const deleteIcon = css`
-  width: 70%;
-  height: auto;
 `;
