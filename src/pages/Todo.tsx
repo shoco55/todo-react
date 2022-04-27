@@ -63,7 +63,8 @@ const content = css`
 
 const title = css`
   margin-bottom: 0.5em;
-  font-weight: 700;
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 300;
   font-size: 4rem;
 `;
 
