@@ -53,7 +53,7 @@ export const TodoList: VFC<Props> = (props) => {
         return (
           <TodoItem
             todo={todo}
-            itemIndex={index}
+            todoIndex={index}
             updateTodoIsCompleted={updateTodoIsCompleted}
             deleteTodo={deleteTodo}
           />

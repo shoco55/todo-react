@@ -9,13 +9,13 @@ import { palette, color } from 'assets/css/foundation/variables';
 
 type Props = {
   todo: TodoType;
-  itemIndex: number;
+  todoIndex: number;
   updateTodoIsCompleted: (index: number) => void;
   deleteTodo: (index: number) => void;
 };
 
 export const TodoItem: VFC<Props> = (props) => {
-  const { todo, itemIndex, updateTodoIsCompleted, deleteTodo } = props;
+  const { todo, todoIndex, updateTodoIsCompleted, deleteTodo } = props;
 
   return (
     <li key={todo.id} css={listItem}>
@@ -26,13 +26,13 @@ export const TodoItem: VFC<Props> = (props) => {
             aria-label={`${todo.content}のチェックボックス`}
             css={checkboxSubstance}
             checked={todo.isCompleted}
-            onChange={() => updateTodoIsCompleted(itemIndex)}
+            onChange={() => updateTodoIsCompleted(todoIndex)}
           />
           <span css={checkboxIcon} />
         </label>
         <p css={checkboxText}>{todo.content}</p>
 
-        <TodoDelete itemIndex={itemIndex} deleteTodo={deleteTodo} />
+        <TodoDelete todoIndex={todoIndex} deleteTodo={deleteTodo} />
       </div>
     </li>
   );

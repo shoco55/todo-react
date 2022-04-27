@@ -6,18 +6,18 @@ import deleteImage from 'assets/images/cross.svg';
 import { color } from 'assets/css/foundation/variables';
 
 type Props = {
-  itemIndex: number;
+  todoIndex: number;
   deleteTodo: (index: number) => void;
 };
 
 export const TodoDelete: VFC<Props> = (props) => {
-  const { itemIndex, deleteTodo } = props;
+  const { todoIndex, deleteTodo } = props;
 
   return (
     <button
       type="button"
       css={deleteButton}
-      onClick={() => deleteTodo(itemIndex)}>
+      onClick={() => deleteTodo(todoIndex)}>
       <img src={deleteImage} alt="削除アイコン" css={deleteIcon} />
     </button>
   );
