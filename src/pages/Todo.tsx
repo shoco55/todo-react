@@ -22,6 +22,13 @@ export const Todo = () => {
     setTodos(newTodos);
   };
 
+  const updateTodoIsCompleted = (index: number) => {
+    const newTodos = [...todos];
+    const newTodo = newTodos[index];
+    newTodo.isCompleted = !newTodo.isCompleted;
+    setTodos(newTodos);
+  };
+
   const deleteTodo = (index: number) => {
     const newTodos = [...todos];
     newTodos.splice(index, 1);
@@ -35,7 +42,11 @@ export const Todo = () => {
         <div>
           <TodoAdd addTodo={addTodo} />
           <div css={todoListWrapper}>
-            <TodoList todos={todos} deleteTodo={deleteTodo} />
+            <TodoList
+              todos={todos}
+              updateTodoIsCompleted={updateTodoIsCompleted}
+              deleteTodo={deleteTodo}
+            />
           </div>
         </div>
       </div>
