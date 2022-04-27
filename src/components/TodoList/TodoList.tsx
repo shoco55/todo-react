@@ -1,11 +1,13 @@
-import { VFC } from 'react';
+import { VFC, useRef, useState, useEffect } from 'react';
 import { css } from '@emotion/react';
 
 import deleteImage from 'assets/images/cross.svg';
 
+import { usePrevious } from 'hooks/usePrevious';
+
 import { TodoType } from 'types/todo';
 
-import { palette, color } from 'assets/css/foundation/variables';
+import { palette, color, size } from 'assets/css/foundation/variables';
 
 type Props = {
   todos: TodoType[];
@@ -14,8 +16,37 @@ type Props = {
 export const TodoList: VFC<Props> = (props) => {
   const { todos } = props;
 
+  const listRef = useRef(null);
+  const [listHeight, setListHeight] = useState(0);
+  const prevListHeight = usePrevious(listHeight);
+
+  const scrollToBottom = () => {
+    if (listRef?.current == null) return;
+
+    const listElement: HTMLElement = listRef.current;
+    listElement.scrollTo({
+      top: listHeight,
+      left: 0,
+      behavior: 'smooth',
+    });
+  };
+
+  useEffect(() => {
+    if (listRef?.current == null) return;
+    const listElement: HTMLElement = listRef.current;
+    setListHeight(listElement.scrollHeight);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [todos]);
+
+  useEffect(() => {
+    if (prevListHeight && prevListHeight < listHeight) {
+      scrollToBottom();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [listHeight]);
+
   return (
-    <ul css={list}>
+    <ul css={list} ref={listRef}>
       {todos.map((todo) => {
         const { id, content, isCompleted } = todo;
         return (
@@ -44,16 +75,14 @@ export const TodoList: VFC<Props> = (props) => {
 };
 
 const list = css`
+  max-height: calc(${size.contentHeight} - 100px);
   list-style-type: none;
   overflow-y: auto;
 `;
 
 const listItem = css`
-  padding: 1em 0.4em;
-
-  & + & {
-    border-top: 1px solid ${color.hr};
-  }
+  padding: 1em 1em 1em 0.4em;
+  border-bottom: 1px solid ${color.hr};
 `;
 
 const itemCard = css`

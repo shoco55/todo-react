@@ -1,16 +1,45 @@
-import { VFC } from 'react';
+import { VFC, useState, ChangeEvent, FormEvent } from 'react';
 import { css } from '@emotion/react';
 
 import { palette, color } from 'assets/css/foundation/variables';
 
-export const TodoAdd: VFC = () => {
+type Props = {
+  addTodo: (text: string) => void;
+};
+
+export const TodoAdd: VFC<Props> = (props) => {
+  const { addTodo } = props;
+
+  const [todoText, setTodoText] = useState('');
+
+  const updateTodoText = (event: ChangeEvent<HTMLInputElement>) => {
+    setTodoText(event.target.value);
+  };
+
+  const isAddButtonDisabled = () => {
+    return todoText.length < 1;
+  };
+
+  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+
+    addTodo(todoText);
+    setTodoText('');
+  };
+
   return (
-    <div css={container}>
-      <input type="text" title="タスク追加用のフォーム" css={addInput} />
-      <button type="button" css={addButton}>
+    <form css={container} onSubmit={handleSubmit}>
+      <input
+        type="text"
+        title="タスクを入力"
+        css={addInput}
+        value={todoText}
+        onChange={updateTodoText}
+      />
+      <button type="submit" css={addButton} disabled={isAddButtonDisabled()}>
         タスクを追加
       </button>
-    </div>
+    </form>
   );
 };
 
@@ -43,5 +72,10 @@ const addButton = css`
 
   &:hover {
     background-color: ${color.primaryDark};
+  }
+
+  &:disabled {
+    pointer-events: none;
+    opacity: 0.4;
   }
 `;

@@ -16,3 +16,7 @@ export const color = {
   iconHover: palette.lightGray,
   background: palette.lightGray3,
 };
+
+export const size = {
+  contentHeight: '70vh'
+}

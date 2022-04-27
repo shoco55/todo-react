@@ -1,39 +1,33 @@
 import { useState } from 'react';
 import { css } from '@emotion/react';
+import { v4 as uuidv4 } from 'uuid';
 
 import { TodoList } from 'components/TodoList/TodoList';
 import { TodoAdd } from 'components/TodoAdd/TodoAdd';
 
 import { TodoType } from 'types/todo';
 
-import { palette, color } from 'assets/css/foundation/variables';
+import { palette, color, size } from 'assets/css/foundation/variables';
 
 export const Todo = () => {
-  const initialTodos: TodoType[] = [
-    {
-      id: 0,
-      content: 'トイレを掃除する',
+  const [todos, setTodos] = useState<TodoType[]>([]);
+
+  const addTodo = (text: string) => {
+    const newTodo: TodoType = {
+      id: uuidv4(),
+      content: text,
       isCompleted: false,
-    },
-    {
-      id: 1,
-      content: '洗濯を干す',
-      isCompleted: false,
-    },
-    {
-      id: 2,
-      content: '食材の買い出しに行く',
-      isCompleted: false,
-    },
-  ];
-  const [todos] = useState(initialTodos);
+    };
+    const newTodos = [...todos, newTodo];
+    setTodos(newTodos);
+  };
 
   return (
     <div css={wrapper}>
       <h1 css={title}>todos</h1>
       <div css={content}>
         <div>
-          <TodoAdd />
+          <TodoAdd addTodo={addTodo} />
           <div css={todoListWrapper}>
             <TodoList todos={todos} />
           </div>
@@ -55,7 +49,7 @@ const wrapper = css`
 const content = css`
   width: 500px;
   max-width: 92%;
-  height: 70vh;
+  height: ${size.contentHeight};
   padding: 20px;
   background-color: ${palette.white};
   border-radius: 8px;
