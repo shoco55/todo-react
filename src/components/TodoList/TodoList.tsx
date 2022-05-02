@@ -52,6 +52,7 @@ export const TodoList: VFC<Props> = (props) => {
       {todos.map((todo, index) => {
         return (
           <TodoItem
+            key={todo.id}
             todo={todo}
             todoIndex={index}
             updateTodoIsCompleted={updateTodoIsCompleted}

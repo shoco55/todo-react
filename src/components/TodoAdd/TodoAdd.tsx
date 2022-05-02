@@ -17,11 +17,12 @@ export const TodoAdd: VFC<Props> = (props) => {
   };
 
   const isAddButtonDisabled = () => {
-    return todoText.length < 1;
+    return todoText.trim().length < 1;
   };
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    if (todoText.trim() === '') return;
 
     addTodo(todoText);
     setTodoText('');
@@ -70,12 +71,12 @@ const addButton = css`
   font-weight: 700;
   font-size: 1.6rem;
 
-  &:hover {
+  &:not(:disabled):hover {
     background-color: ${color.primaryDark};
   }
 
   &:disabled {
-    pointer-events: none;
     opacity: 0.4;
+    cursor: not-allowed;
   }
 `;

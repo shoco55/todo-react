@@ -18,7 +18,7 @@ export const TodoItem: VFC<Props> = (props) => {
   const { todo, todoIndex, updateTodoIsCompleted, deleteTodo } = props;
 
   return (
-    <li key={todo.id} css={listItem}>
+    <li css={listItem}>
       <div css={itemCard}>
         <label css={checkbox}>
           <input
@@ -30,9 +30,11 @@ export const TodoItem: VFC<Props> = (props) => {
           />
           <span css={checkboxIcon} />
         </label>
-        <p css={checkboxText}>{todo.content}</p>
+        <p css={todo.isCompleted ? checkedCheckboxText : checkboxText}>
+          {todo.content}
+        </p>
 
-        <TodoDelete todoIndex={todoIndex} deleteTodo={deleteTodo} />
+        <TodoDelete todo={todo} todoIndex={todoIndex} deleteTodo={deleteTodo} />
       </div>
     </li>
   );
@@ -120,8 +122,12 @@ const checkboxIcon = css`
 `;
 
 const checkboxText = css`
-  input:checked ~ & {
-    text-decoration: line-through;
-    opacity: 0.6;
-  }
+  font-size: 1.6rem;
+`;
+
+const checkedCheckboxText = css`
+  ${checkboxText};
+
+  text-decoration: line-through;
+  opacity: 0.6;
 `;
