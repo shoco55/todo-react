@@ -1,5 +1,8 @@
 export type TodoType = {
-  id: string;
+  id: number;
   content: string;
   isCompleted: boolean;
 };
+
+type Optional = 'id';
+export type TodoTypePost = Omit<TodoType, Optional>;

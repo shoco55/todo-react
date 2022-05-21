@@ -11,8 +11,8 @@ import { size } from 'assets/css/foundation/variables';
 
 type Props = {
   todos: TodoType[];
-  updateTodoIsCompleted: (index: number) => void;
-  deleteTodo: (index: number) => void;
+  updateTodoIsCompleted: (todoData: TodoType) => Promise<void>;
+  deleteTodo: (id: number) => Promise<void>;
 };
 
 export const TodoList: VFC<Props> = (props) => {
@@ -48,19 +48,24 @@ export const TodoList: VFC<Props> = (props) => {
   }, [listHeight]);
 
   return (
-    <ul css={list} ref={listRef}>
-      {todos.map((todo, index) => {
-        return (
-          <TodoItem
-            key={todo.id}
-            todo={todo}
-            todoIndex={index}
-            updateTodoIsCompleted={updateTodoIsCompleted}
-            deleteTodo={deleteTodo}
-          />
-        );
-      })}
-    </ul>
+    <div>
+      {todos.length > 0 ? (
+        <ul css={list} ref={listRef}>
+          {todos.map((todo) => {
+            return (
+              <TodoItem
+                key={todo.id}
+                todo={todo}
+                updateTodoIsCompleted={updateTodoIsCompleted}
+                deleteTodo={deleteTodo}
+              />
+            );
+          })}
+        </ul>
+      ) : (
+        <p>タスクを追加してね</p>
+      )}
+    </div>
   );
 };
 

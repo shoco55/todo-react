@@ -4,28 +4,32 @@ import { css } from '@emotion/react';
 import { palette, color } from 'assets/css/foundation/variables';
 
 type Props = {
-  addTodo: (text: string) => void;
+  addTodo: (content: string) => Promise<void>;
+  isButtonLoading: boolean;
 };
 
 export const TodoAdd: VFC<Props> = (props) => {
-  const { addTodo } = props;
+  const { addTodo, isButtonLoading } = props;
 
-  const [todoText, setTodoText] = useState('');
+  const [todoContent, setTodoContent] = useState('');
 
-  const updateTodoText = (event: ChangeEvent<HTMLInputElement>) => {
-    setTodoText(event.target.value);
+  const updateTodoContent = (event: ChangeEvent<HTMLInputElement>) => {
+    setTodoContent(event.target.value);
   };
 
   const isAddButtonDisabled = () => {
-    return todoText.trim().length < 1;
+    return todoContent.trim().length < 1;
   };
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    if (todoText.trim() === '') return;
+    if (todoContent.trim() === '') return;
 
-    addTodo(todoText);
-    setTodoText('');
+    addTodo(todoContent)
+      .then(() => setTodoContent(''))
+      .catch(() => {
+        // エラー処理
+      });
   };
 
   return (
@@ -34,11 +38,11 @@ export const TodoAdd: VFC<Props> = (props) => {
         type="text"
         title="タスクを入力"
         css={addInput}
-        value={todoText}
-        onChange={updateTodoText}
+        value={todoContent}
+        onChange={updateTodoContent}
       />
       <button type="submit" css={addButton} disabled={isAddButtonDisabled()}>
-        タスクを追加
+        {isButtonLoading ? '送信中...' : 'タスクを追加'}
       </button>
     </form>
   );
@@ -61,9 +65,12 @@ const addInput = css`
 `;
 
 const addButton = css`
+  display: flex;
+  justify-content: center;
+  align-items: center;
   flex-shrink: 0;
+  width: 120px;
   height: 44px;
-  padding: 0 1em;
   background-color: ${color.primary};
   border-top-right-radius: 4px;
   border-bottom-right-radius: 4px;
