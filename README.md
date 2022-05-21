@@ -18,6 +18,8 @@ React、テストコードを書く練習のために作成。
 2022.05.12  
 Express で API 開発して組み込み。
 バックエンド：https://github.com/shoco55/todo-api
+＊タスク追加や削除など、自由にお試しください。
+　データはデータベースに保存されますことをご理解いただいた上でご利用ください。
 
 ## URL
 
@@ -32,10 +34,16 @@ https://shoco55.github.io/todo-react/
 
 ## 利用技術一覧
 
-- React
-- TypeScript
-- Emotion
-- GitHub Pages
+- フロントエンド
+  - React
+  - TypeScript
+  - Emotion
+  - GitHub Pages
+
+- バックエンド
+  - Express
+  - PostgreSQL
+  - Heroku
 
 ## ローカル動作環境・動作方法
 
