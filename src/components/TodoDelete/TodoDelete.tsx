@@ -9,19 +9,22 @@ import { color } from 'assets/css/foundation/variables';
 
 type Props = {
   todo: TodoType;
-  todoIndex: number;
-  deleteTodo: (index: number) => void;
+  deleteTodo: (id: number) => Promise<void>;
 };
 
 export const TodoDelete: VFC<Props> = (props) => {
-  const { todo, todoIndex, deleteTodo } = props;
+  const { todo, deleteTodo } = props;
+
+  const onClickDelete = (id: number) => {
+    void deleteTodo(id);
+  };
 
   return (
     <button
       type="button"
       aria-label={`${todo.content}を削除する`}
       css={deleteButton}
-      onClick={() => deleteTodo(todoIndex)}>
+      onClick={() => onClickDelete(todo.id)}>
       <img src={deleteImage} alt="削除アイコン" css={deleteIcon} />
     </button>
   );

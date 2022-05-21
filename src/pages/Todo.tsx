@@ -1,38 +1,126 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { css } from '@emotion/react';
-import { v4 as uuidv4 } from 'uuid';
+import camelcaseKeys from 'camelcase-keys';
+
+import { RepositoryFactory } from 'repositories/RepositoryFactory';
 
 import { TodoList } from 'components/TodoList/TodoList';
 import { TodoAdd } from 'components/TodoAdd/TodoAdd';
+import { LoaderIcon } from 'components/LoaderIcon/LoaderIcon';
 
+import { useLoader } from 'hooks/useLoader';
+import { useLoaderButton } from 'hooks/useLoaderButton';
+
+import { ApiResponse } from 'types/apiResponse';
 import { TodoType } from 'types/todo';
 
 import { palette, color, size } from 'assets/css/foundation/variables';
 
+const todosRepository = RepositoryFactory.get('todos');
+
 export const Todo = () => {
+  const { isLoading, showLoader, hideLoader } = useLoader();
+  const { isButtonLoading, showLoaderButton, hideLoaderButton } =
+    useLoaderButton();
+
   const [todos, setTodos] = useState<TodoType[]>([]);
 
-  const addTodo = (text: string) => {
-    const newTodo: TodoType = {
-      id: uuidv4(),
-      content: text,
-      isCompleted: false,
-    };
-    const newTodos = [...todos, newTodo];
-    setTodos(newTodos);
+  const getTodos = async (): Promise<void> => {
+    try {
+      showLoader();
+
+      const res = await todosRepository.getTodos();
+
+      if (res.status === 200) {
+        const r: ApiResponse<TodoType[]> = res.data;
+        const todosData = camelcaseKeys(r.data);
+        setTodos(todosData);
+      } else {
+        throw new Error();
+      }
+    } catch (error) {
+      // エラー処理
+    } finally {
+      hideLoader();
+    }
   };
 
-  const updateTodoIsCompleted = (index: number) => {
-    const newTodos = [...todos];
-    const newTodo = newTodos[index];
-    newTodo.isCompleted = !newTodo.isCompleted;
-    setTodos(newTodos);
+  useEffect(() => {
+    void getTodos();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const addTodo = async (content: string): Promise<void> => {
+    try {
+      showLoaderButton();
+
+      const dataObj = {
+        content,
+        isCompleted: false,
+      };
+
+      const res = await todosRepository.postTodo(dataObj);
+
+      if (res.status === 200) {
+        const r: ApiResponse<Pick<TodoType, 'id'>> = res.data;
+        const { id } = camelcaseKeys(r.data);
+        const newTodo = { ...dataObj, id };
+        const newTodos = [...todos, newTodo];
+        setTodos(newTodos);
+      } else {
+        throw new Error();
+      }
+    } catch (error) {
+      // エラー処理
+    } finally {
+      hideLoaderButton();
+    }
   };
 
-  const deleteTodo = (index: number) => {
-    const newTodos = [...todos];
-    newTodos.splice(index, 1);
-    setTodos(newTodos);
+  const updateTodoIsCompleted = async (todoData: TodoType): Promise<void> => {
+    try {
+      const { id, content, isCompleted } = todoData;
+
+      const dataObj = {
+        content,
+        isCompleted: !isCompleted,
+      };
+
+      const res = await todosRepository.updateTodo(id, dataObj);
+
+      if (res.status === 200) {
+        const newTodo = { id, ...dataObj };
+        const newTodos = [...todos];
+        const updateTodoIndex = newTodos.findIndex((item) => item.id === id);
+        newTodos.splice(updateTodoIndex, 1, newTodo);
+        setTodos(newTodos);
+      } else {
+        throw new Error();
+      }
+    } catch (error) {
+      // エラー処理
+    }
+  };
+
+  const deleteTodo = async (id: number): Promise<void> => {
+    try {
+      showLoader();
+
+      const res = await todosRepository.deleteTodo(id);
+
+      if (res.status === 200) {
+        const index = todos.findIndex((todo) => todo.id === id);
+        const newTodos = [...todos];
+        newTodos.splice(index, 1);
+        setTodos(newTodos);
+      } else {
+        throw new Error();
+      }
+    } catch (error) {
+      // エラー処理
+    } finally {
+      hideLoader();
+    }
   };
 
   return (
@@ -40,13 +128,17 @@ export const Todo = () => {
       <h1 css={title}>todos</h1>
       <div css={content}>
         <div>
-          <TodoAdd addTodo={addTodo} />
+          <TodoAdd addTodo={addTodo} isButtonLoading={isButtonLoading} />
           <div css={todoListWrapper}>
-            <TodoList
-              todos={todos}
-              updateTodoIsCompleted={updateTodoIsCompleted}
-              deleteTodo={deleteTodo}
-            />
+            {isLoading ? (
+              <LoaderIcon />
+            ) : (
+              <TodoList
+                todos={todos}
+                updateTodoIsCompleted={updateTodoIsCompleted}
+                deleteTodo={deleteTodo}
+              />
+            )}
           </div>
         </div>
       </div>
